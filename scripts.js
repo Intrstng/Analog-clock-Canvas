@@ -1,20 +1,18 @@
-let canvas;
+const canvas = document.getElementById('clock');
+const ctx = canvas.getContext('2d');
 let radius;
 let fontSize;
 let canvasPadding;
 let angle;
-const date = new Date();
-let hour = date.getHours();
-const min = date.getMinutes();
-const sec = date.getSeconds();
+let tickTimer;
 
 window.onload = function() {
-  canvas = document.getElementById('clock');
   adaptiveResizeCanvas();
   drawClockCanvas();
 }
 window.onresize = function() {
   adaptiveResizeCanvas();
+  clearTimeout(tickTimer);
   drawClockCanvas();
 }
 
@@ -28,13 +26,21 @@ function adaptiveResizeCanvas() {
   canvasPadding = radius * 0.08;
 }
 
+function blankCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 function drawClockCanvas() {
+  const date = new Date();
+  let hour = date.getHours();
+  const min = date.getMinutes();
+  const sec = date.getSeconds();
   if (canvas && canvas.getContext('2d')) {
-    let ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Blank canvas
+    blankCanvas();
+    // Canvas center point
     let xpos = canvas.width / 2;
     let ypos = canvas.height / 2;
-
     // Create clock face
       ctx.beginPath();
       // Draw gradient in center of clockface
@@ -54,8 +60,7 @@ function drawClockCanvas() {
       ctx.lineWidth = radius * 0.03;
       ctx.arc(xpos, ypos, radius - ctx.lineWidth / 2 - canvasPadding, 0, 2 * Math.PI);
       ctx.stroke();
-
-    // Fill clock face         
+      // Fill clock face         
       ctx.translate(xpos, ypos);
       for(let i = 1; i <= 12; i++) {
         // Draw clock face digits
@@ -100,21 +105,20 @@ function drawClockCanvas() {
       }
         // Draw minute dashes
         for(let i = 1; i <= 60; i++) {
-            ctx.save();
-            let angle2 = i * Math.PI / 30;
-            ctx.beginPath();
-            ctx.strokeStyle = 'rgb(0, 0, 0)';
-            ctx.fillStyle = 'rgb(0, 0, 0)';
-            ctx.lineWidth = radius * 0.0065;
-            ctx.lineCap = 'round';
-            ctx.rotate(angle2);
-            ctx.moveTo(radius * 0.745, 0);
-            ctx.lineTo(radius * 0.78,0);
-            ctx.stroke();
-            ctx.restore();
+          ctx.save();
+          let angle2 = i * Math.PI / 30;
+          ctx.beginPath();
+          ctx.strokeStyle = 'rgb(0, 0, 0)';
+          ctx.fillStyle = 'rgb(0, 0, 0)';
+          ctx.lineWidth = radius * 0.0065;
+          ctx.lineCap = 'round';
+          ctx.rotate(angle2);
+          ctx.moveTo(radius * 0.745, 0);
+          ctx.lineTo(radius * 0.78,0);
+          ctx.stroke();
+          ctx.restore();
         }
-
-    // Draw digital clock
+      // Draw digital clock
       let fontSizeDigitalClock = parseInt(fontSize) * 0.9 + 'px';
       const time = String(hour).padStart(2, 0) + ':' + String(min).padStart(2, 0) + ':' + String(sec).padStart(2, 0);
       ctx.beginPath();
@@ -122,7 +126,7 @@ function drawClockCanvas() {
       ctx.font = `bold ${fontSizeDigitalClock} 'Rubik Iso'`;
       ctx.fillText(time, -radius * 0.25, -radius * 0.28);
 
-    // Draw analog clock
+      // Draw analog clock
       let hourAnalog = date.getHours() % 12 || 12;
       const secDegree = sec * 6;
       let minDegree = min * 6;
@@ -135,7 +139,6 @@ function drawClockCanvas() {
       drawHand(ctx, hourRadians, radius * 0.48, radius * 0.011, 'rgb(0, 0, 0)');
       drawHand(ctx, minRadians, radius * 0.6, radius * 0.008, 'rgb(0, 0, 0)');
       drawHand(ctx, secRadians, radius * 0.7, radius * 0.0035, 'rgb(74, 147, 77)');
-    
 
     function drawHand(ctx, pos, length, width, color) {
       ctx.save();
@@ -165,5 +168,13 @@ function drawClockCanvas() {
       ctx.restore();
     }
     drawCenterCircle(ctx, radius);
-}
+    console.log('hourAngleDeg: ' + hourDegree,
+                'minAngleDeg: ' + minDegree,
+                'secAngleDeg: ' + secDegree)
+  }
+  
+  tickTimer = setTimeout(() => {
+    adaptiveResizeCanvas();
+    drawClockCanvas();
+  }, 1000);
 }
