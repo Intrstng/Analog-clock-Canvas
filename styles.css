@@ -7,16 +7,8 @@ body {
   height: 100vh;
   padding: 0;
   margin: 0;
-
-
-  background-image: url('./asssets/bg.webp');
+  background-image: url('./assets/bg.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
-
-
 }
-/* #background {
-  position: absolute;
-} */
