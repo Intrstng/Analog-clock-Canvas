@@ -35,33 +35,30 @@ function drawClockCanvas() {
     let xpos = canvas.width / 2;
     let ypos = canvas.height / 2;
 
-    function createClockFace() {
-      // draw clock face
+    // Create clock face
       ctx.beginPath();
-      // draw gradient in center of clockface
+      // Draw gradient in center of clockface
       const grad = ctx.createRadialGradient(xpos, ypos, 1, xpos, ypos, radius / 1.25);
       grad.addColorStop(0,'rgb(255, 255, 255)');
       grad.addColorStop(1,'rgb(238, 62, 61)');
       ctx.fillStyle = grad;
-      // draw light green colored watermelon rind
+      // Draw light green colored watermelon rind
       ctx.strokeStyle = 'rgb(200, 207, 145)';
       ctx.lineWidth = radius * 0.09;
       ctx.arc(xpos, ypos, radius - ctx.lineWidth / 2 - canvasPadding, 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
-      // draw green colored watermelon rind
+      // Draw green colored watermelon rind
       ctx.beginPath();
       ctx.strokeStyle = 'rgb(74, 147, 77)';
       ctx.lineWidth = radius * 0.03;
       ctx.arc(xpos, ypos, radius - ctx.lineWidth / 2 - canvasPadding, 0, 2 * Math.PI);
       ctx.stroke();
-    }
-    createClockFace()
 
-    function fillClockFace() {             
+    // Fill clock face         
       ctx.translate(xpos, ypos);
       for(let i = 1; i <= 12; i++) {
-        // draw clock face digits
+        // Draw clock face digits
         ctx.save();
         ctx.beginPath();
         angle = i * Math.PI / 6;
@@ -77,7 +74,7 @@ function drawClockCanvas() {
         ctx.translate(0, radius * 0.63);
         ctx.rotate(-angle);
         ctx.restore();
-          // draw hour dashes - set styles
+          // Draw hour dashes - set styles
           ctx.save();
           ctx.beginPath();
           ctx.strokeStyle = 'rgb(0, 0, 0)';
@@ -85,7 +82,7 @@ function drawClockCanvas() {
           ctx.lineWidth =  radius * 0.015;
           ctx.rotate(angle);
           ctx.strokeStyle = 'rgb(0, 0, 0)';
-          // draw hour dashes (watermelon seed styled)
+          // Draw hour dashes (watermelon seed styled)
             let degreesStart = 270;
             let radiansStart = (Math.PI / 180) * degreesStart;
             let degreesEnd = 90;
@@ -101,7 +98,7 @@ function drawClockCanvas() {
             ctx.stroke();
             ctx.restore();
       }
-        // draw minute dashes
+        // Draw minute dashes
         for(let i = 1; i <= 60; i++) {
             ctx.save();
             let angle2 = i * Math.PI / 30;
@@ -116,18 +113,16 @@ function drawClockCanvas() {
             ctx.stroke();
             ctx.restore();
         }
-    }
 
-    function showTimeDigitalClock() {
+    // Draw digital clock
       let fontSizeDigitalClock = parseInt(fontSize) * 0.9 + 'px';
       const time = String(hour).padStart(2, 0) + ':' + String(min).padStart(2, 0) + ':' + String(sec).padStart(2, 0);
       ctx.beginPath();
       ctx.fillStyle = 'rgb(255, 0, 0)';
       ctx.font = `bold ${fontSizeDigitalClock} 'Rubik Iso'`;
       ctx.fillText(time, -radius * 0.25, -radius * 0.28);
-    }
 
-    function showAnalogTime() {
+    // Draw analog clock
       let hourAnalog = date.getHours() % 12 || 12;
       const secDegree = sec * 6;
       let minDegree = min * 6;
@@ -140,13 +135,11 @@ function drawClockCanvas() {
       drawHand(ctx, hourRadians, radius * 0.48, radius * 0.011, 'rgb(0, 0, 0)');
       drawHand(ctx, minRadians, radius * 0.6, radius * 0.008, 'rgb(0, 0, 0)');
       drawHand(ctx, secRadians, radius * 0.7, radius * 0.0035, 'rgb(74, 147, 77)');
-    }
-    showAnalogTime()
     
 
     function drawHand(ctx, pos, length, width, color) {
       ctx.save();
-      ctx.translate(xpos, ypos);
+      ctx.translate(0, 0);
       ctx.strokeStyle = color;
       ctx.fillStyle = color;
       ctx.lineWidth = width;
@@ -166,14 +159,11 @@ function drawClockCanvas() {
     function drawCenterCircle(ctx, radius) {
       ctx.save();
       ctx.beginPath();
-      ctx.arc(xpos, ypos, radius * 0.02, 0, 2 * Math.PI);
+      ctx.arc(0, 0, radius * 0.02, 0, 2 * Math.PI);
       ctx.fillStyle = 'rgb(238, 65, 64)';
       ctx.fill();
       ctx.restore();
     }
     drawCenterCircle(ctx, radius);
 }
-
-fillClockFace()
-showTimeDigitalClock()
 }
