@@ -50,7 +50,6 @@ function drawClockCanvas() {
     ctx.arc(xpos, ypos, radius - ctx.lineWidth / 2 - canvasPadding, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
-    ctx.closePath();
 
     // draw yellow watermelon rind
     ctx.beginPath();
@@ -58,7 +57,6 @@ function drawClockCanvas() {
     ctx.lineWidth = radius * 0.03;
     ctx.arc(xpos, ypos, radius - ctx.lineWidth / 2 - canvasPadding, 0, 2 * Math.PI);
     ctx.stroke();
-    ctx.closePath();
     console.log("1", xpos, ypos)
 
     // draw clock face digits
@@ -81,21 +79,31 @@ function drawClockCanvas() {
         ctx.rotate(angle);
         ctx.translate(0, radius * 0.63);
         ctx.rotate(-angle);
-        ctx.closePath();
         ctx.restore();
           // draw hour dashes
           ctx.save();
           ctx.beginPath();
           ctx.strokeStyle = "rgb(0, 0, 0)";
           ctx.fillStyle = "rgb(0, 0, 0)";
-          ctx.lineWidth =  radius * 0.025;
-          ctx.lineCap = "round";
+          ctx.lineWidth =  radius * 0.015;
           ctx.rotate(angle);
-          ctx.moveTo(radius * 0.73, 0);
-          ctx.lineTo(radius * 0.78,0);
-          ctx.stroke();
-          ctx.closePath();
-          ctx.restore();
+          ctx.strokeStyle="rgb(0, 0, 0)";
+
+          // Draw hour dashes (watermelon seed styled)
+            let degreesStart = 270;
+            let radiansStart = (Math.PI / 180) * degreesStart;
+            let degreesEnd = 90;
+            let radiansEnd = (Math.PI / 180) * degreesEnd;
+            ctx.lineJoin = "round";
+            ctx.beginPath();
+            ctx.moveTo(radius * 0.78, radius * 0.015);
+            ctx.lineTo(radius * 0.73, 0);
+            ctx.lineTo(radius * 0.78, -radius * 0.015);
+            ctx.arc(radius * 0.78, 0, radius * 0.015, radiansStart, radiansEnd);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
       }
         // draw minute dashes
         for(let i = 1; i <= 60; i++) {
@@ -105,12 +113,11 @@ function drawClockCanvas() {
             ctx.strokeStyle = "rgb(0, 0, 0)";
             ctx.fillStyle = "rgb(0, 0, 0)";
             ctx.lineWidth = radius * 0.0065;
-            ctx.lineCap = "square";
+            ctx.lineCap = "round";
             ctx.rotate(angle2);
             ctx.moveTo(radius * 0.745, 0);
             ctx.lineTo(radius * 0.78,0);
             ctx.stroke();
-            ctx.closePath();
             ctx.restore();
         }
     }
@@ -123,7 +130,6 @@ function drawClockCanvas() {
       ctx.fillStyle='rgb(255, 0, 0)';
       ctx.font = `bold ${fontSizeDigitalClock} "Rubik Iso"`;
       ctx.fillText(time, -radius * 0.25, -radius * 0.28);
-      ctx.closePath();
       // digitalClock.textContent = time;
       // setTimeout(() => {
       //   showTimeDigitalClock();
