@@ -4,7 +4,18 @@ let radius;
 let fontSize;
 let canvasPadding;
 let angle;
-let tickTimer;
+let drawRequestAdaptiveCanvas; // window.requestAnimationFrame(fn) - for canvas adaptability (when the window is resized);
+let drawRequestCanvas; // window.requestAnimationFrame(fn) - draws canvas ;
+
+// Set window.requestAnimationFrame()
+const requestAnimationFrame =
+  window.requestAnimationFrame ||
+  window.mozRequestAnimationFrame ||
+  window.webkitRequestAnimationFrame ||
+  window.msRequestAnimationFrame;
+// Clear window.requestAnimationFrame()
+const cancelAnimationFrame = window.cancelAnimationFrame ||
+  window.mozCancelAnimationFrame;
 
 window.onload = function() {
   adaptiveResizeCanvas();
@@ -12,7 +23,8 @@ window.onload = function() {
 }
 window.onresize = function() {
   adaptiveResizeCanvas();
-  clearTimeout(tickTimer);
+  cancelAnimationFrame(drawRequestAdaptiveCanvas); //removes unnecessary calls after screen resize
+  cancelAnimationFrame(drawRequestCanvas); //removes unnecessary calls after screen resize
   drawClockCanvas();
 }
 
@@ -35,6 +47,7 @@ function drawClockCanvas() {
   let hour = date.getHours();
   const min = date.getMinutes();
   const sec = date.getSeconds();
+  const millisec = date.getMilliseconds();
   if (canvas && canvas.getContext('2d')) {
     // Blank canvas
     blankCanvas();
@@ -133,7 +146,8 @@ function drawClockCanvas() {
       let hourDegree = hourAnalog * 30 + minDegree / 12;
       secDegree === 360 && (secDegree = 0);
       minDegree === 360 && (minDegree = 0);
-        const secRadians = sec * 6 * (Math.PI / 180);
+        const secRadians = ((2 * Math.PI) / 60) * sec +
+        ((2 * Math.PI) / 60000) * millisec; // Smooth movement of the second hand
         const minRadians = min * 6 * (Math.PI / 180);
         const hourRadians = hourDegree * (Math.PI / 180);
       drawHand(ctx, hourRadians, radius * 0.48, radius * 0.011, 'rgb(0, 0, 0)');
@@ -172,9 +186,6 @@ function drawClockCanvas() {
                 'minAngleDeg: ' + minDegree,
                 'secAngleDeg: ' + secDegree)
   }
-  
-  tickTimer = setTimeout(() => {
-    adaptiveResizeCanvas();
-    drawClockCanvas();
-  }, 1000);
+  drawRequestAdaptiveCanvas = requestAnimationFrame(adaptiveResizeCanvas);
+  drawRequestCanvas = requestAnimationFrame(drawClockCanvas);
 }
